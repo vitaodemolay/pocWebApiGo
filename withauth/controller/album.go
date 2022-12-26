@@ -22,13 +22,12 @@ func (controller *Controller) GetAlbums(c *gin.Context) {
 }
 
 // PostAlbums godoc
-// @Summary post an albums
+// @Summary post an album
 // @Description adds an album from JSON received in the request body.
 // @Tags albums
 // @Accept json
 // @Produce json
 // @Param        album body      model.Album  true  "Add Album"
-// model.Album
 // @Success 200 {object} model.Album
 // @Failure 400 {object} httputil.HTTPError
 // @Router /albums [post]

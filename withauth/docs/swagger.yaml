@@ -20,6 +20,13 @@ definitions:
       title:
         type: string
     type: object
+  model.User:
+    properties:
+      password:
+        type: string
+      userName:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -69,11 +76,11 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/model.Album'
-        "500":
-          description: Internal Server Error
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/httputil.HTTPError'
-      summary: post an albums
+      summary: post an album
       tags:
       - albums
   /albums/{id}:
@@ -124,4 +131,78 @@ paths:
       summary: get an albums by id
       tags:
       - albums
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Get users responds with the list of all users as JSON.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+      summary: get users list
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: adds an user from JSON received in the request body.
+      parameters:
+      - description: Add User
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: post an user
+      tags:
+      - users
+  /users/signin:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: logon the user.
+      parameters:
+      - in: formData
+        name: password
+        type: string
+      - in: formData
+        name: userName
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: post an user login
+      tags:
+      - users
 swagger: "2.0"
