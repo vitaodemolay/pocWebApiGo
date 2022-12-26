@@ -1,14 +1,11 @@
 package controller
 
 import (
-	"errors"
 	"net/http"
-	"strings"
 	"web-api-gin/httputil"
 	"web-api-gin/model"
 	"web-api-gin/service"
 
-	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -47,47 +44,4 @@ func (controller *Controller) PostUsers(c *gin.Context) {
 
 	service.AddNewUser(newUser)
 	c.IndentedJSON(http.StatusCreated, newUser)
-}
-
-// SignIn godoc
-// @Summary post an user login
-// @Description logon the user.
-// @Tags users
-// @Accept x-www-form-urlencoded
-// @Produce json
-// @Param        authetication	 formData	model.User	false  "username and password in formData"
-// @Success 200
-// @Failure 400 {object} httputil.HTTPError
-// @Failure 401 {object} httputil.HTTPError
-// @Failure 500 {object} httputil.HTTPError
-// @Router /users/signin [post]
-func (controller *Controller) SignIn(c *gin.Context) {
-	session := sessions.Default(c)
-	userName := c.PostForm("userName")
-	password := c.PostForm("password")
-
-	if strings.Trim(userName, " ") == "" || strings.Trim(password, " ") == "" {
-		httputil.NewError(c, http.StatusBadRequest, errors.New("Parameters can't be empty"))
-		return
-	}
-
-	var login model.User
-	login.UserName = userName
-	login.Password = password
-
-	if err, user := service.GetUserByUserName(userName); err != nil {
-		httputil.NewError(c, http.StatusUnauthorized, err)
-		return
-	} else if !login.Equals(user) {
-		httputil.NewError(c, http.StatusUnauthorized, errors.New("user name or password is invalid"))
-		return
-	}
-
-	session.Set(userName, userName)
-	if err := session.Save(); err != nil {
-		httputil.NewError(c, http.StatusInternalServerError, errors.New("Failed to save session"))
-		return
-	}
-
-	c.IndentedJSON(http.StatusOK, gin.H{"message": "Successfully authenticated user"})
 }

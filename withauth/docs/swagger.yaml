@@ -131,6 +131,70 @@ paths:
       summary: get an albums by id
       tags:
       - albums
+  /signin:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: logon the user.
+      parameters:
+      - in: formData
+        name: password
+        type: string
+      - in: formData
+        name: userName
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: post an user login
+      tags:
+      - signin
+  /signout:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: logout the user.
+      parameters:
+      - in: formData
+        name: password
+        type: string
+      - in: formData
+        name: userName
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: post an user logout
+      tags:
+      - signout
   /users:
     get:
       consumes:
@@ -171,38 +235,6 @@ paths:
           schema:
             $ref: '#/definitions/httputil.HTTPError'
       summary: post an user
-      tags:
-      - users
-  /users/signin:
-    post:
-      consumes:
-      - application/x-www-form-urlencoded
-      description: logon the user.
-      parameters:
-      - in: formData
-        name: password
-        type: string
-      - in: formData
-        name: userName
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-      summary: post an user login
       tags:
       - users
 swagger: "2.0"

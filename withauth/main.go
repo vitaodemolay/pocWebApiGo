@@ -1,8 +1,12 @@
 package main
 
 import (
+	"errors"
+	"net/http"
 	"web-api-gin/controller"
 	"web-api-gin/docs"
+	"web-api-gin/httputil"
+	"web-api-gin/service"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -13,6 +17,8 @@ import (
 )
 
 var key = uuid.New()
+
+const limitInSeconds float64 = 20 //20 seconds
 
 // @title           Swagger Example API - Albums
 // @version         1.0
@@ -51,12 +57,31 @@ func main() {
 
 		users := v1.Group("/users")
 		{
+			users.Use(AuthRequired)
 			users.GET("", ctrl.GetUsers)
 			users.POST("", ctrl.PostUsers)
-			users.POST("/signin", ctrl.SignIn)
 		}
+
+		v1.POST("/signin", ctrl.SignIn)
+		v1.POST("/signout", ctrl.SignOut)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	router.Run("localhost:8080")
+}
+
+func AuthRequired(ctx *gin.Context) {
+	authHeader := ctx.GetHeader("Authorization")
+	if len(authHeader) == 0 {
+		httputil.NewError(ctx, http.StatusUnauthorized, errors.New("Authorization is required Header"))
+		ctx.Abort()
+	} else if err, login := service.GetLoginByToken(authHeader); err != nil {
+		httputil.NewError(ctx, http.StatusUnauthorized, errors.New("Token not found"))
+		ctx.Abort()
+	} else if login.IsExpired(limitInSeconds) {
+		service.RemoveLoginByToken(login.UserId)
+		httputil.NewError(ctx, http.StatusUnauthorized, errors.New("Token is expired"))
+		ctx.Abort()
+	}
+	ctx.Next()
 }
