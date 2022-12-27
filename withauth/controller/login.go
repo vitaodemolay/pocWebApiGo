@@ -45,7 +45,7 @@ func (controller *Controller) SignIn(c *gin.Context) {
 		httputil.NewError(c, http.StatusUnauthorized, errors.New("user name or password is invalid"))
 		return
 	}
-	login := model.CreateLogin(userTologin)
+	login := service.AddLogin(userTologin)
 
 	session.Set(userName, login.UserId)
 	if err := session.Save(); err != nil {

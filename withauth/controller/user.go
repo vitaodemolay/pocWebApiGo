@@ -16,6 +16,7 @@ import (
 // @Accept json
 // @Produce json
 // @Success 200 {object} []model.User
+// @Security ApiKeyAuth
 // @Router /users [get]
 func (controller *Controller) GetUsers(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, service.GetAllUsers())
@@ -30,6 +31,7 @@ func (controller *Controller) GetUsers(c *gin.Context) {
 // @Param        user body      model.User  true  "Add User"
 // @Success 200 {object} model.User
 // @Failure 400 {object} httputil.HTTPError
+// @Security ApiKeyAuth
 // @Router /users [post]
 func (controller *Controller) PostUsers(c *gin.Context) {
 	var newUser model.User

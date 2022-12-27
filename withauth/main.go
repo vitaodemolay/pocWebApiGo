@@ -35,6 +35,11 @@ const limitInSeconds float64 = 20 //20 seconds
 // @host      localhost:8080
 
 // @BasePath /api/v1
+
+// @securityDefinitions.apikey	ApiKeyAuth
+// @in							header
+// @name						Authorization
+// @description				    Description for what is this security definition being used
 func main() {
 	router := gin.Default()
 	ctrl := controller.NewController()
