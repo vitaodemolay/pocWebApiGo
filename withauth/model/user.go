@@ -34,6 +34,6 @@ func (me User) Equals(user User) bool {
 
 // private method
 func (user User) passwordIsValid() bool {
-	pattern := regexp.MustCompile("/^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,10}$/gm")
+	pattern := regexp.MustCompile("^(.*?)(?:[A-Z])(.*[0-9])(.?[A-z]){0,}")
 	return pattern.MatchString(user.Password)
 }
