@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"web-api-gin/model"
 )
 
@@ -41,6 +42,7 @@ func RemoveLoginByToken(token string) error {
 func RemoveLoginExpired(limitInSeconds float64) {
 	for idx, l := range dbLogins {
 		if l.IsExpired(limitInSeconds) {
+			fmt.Printf("login %v is expired\n", l.UserId)
 			dbLogins = append(dbLogins[:idx], dbLogins[idx+1:]...)
 		}
 	}

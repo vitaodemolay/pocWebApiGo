@@ -2,7 +2,9 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
+	"time"
 	"web-api-gin/controller"
 	"web-api-gin/docs"
 	"web-api-gin/httputil"
@@ -18,7 +20,7 @@ import (
 
 var key = uuid.New()
 
-const limitInSeconds float64 = 20 //20 seconds
+const limitInSeconds float64 = 60 // in seconds
 
 // @title           Swagger Example API - Albums
 // @version         1.0
@@ -43,6 +45,8 @@ const limitInSeconds float64 = 20 //20 seconds
 func main() {
 	router := gin.Default()
 	ctrl := controller.NewController()
+
+	go workerClearExpiredToken()
 
 	secret := []byte(key.String())
 
@@ -89,4 +93,12 @@ func AuthRequired(ctx *gin.Context) {
 		ctx.Abort()
 	}
 	ctx.Next()
+}
+
+func workerClearExpiredToken() {
+	fmt.Println("starting cleaner")
+	for true {
+		service.RemoveLoginExpired(limitInSeconds)
+		time.Sleep(5 * time.Second)
+	}
 }
